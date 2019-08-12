@@ -121,7 +121,7 @@ var imageDefer = function(CONFIG) {
 
             $(this).after(image);
 
-            this.remove();
+            $(this).remove();
         });
     };
 
