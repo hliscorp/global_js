@@ -25,7 +25,7 @@ Two types of scripts will be found in this repository:
 2. If the script is dependent on external factors, in the same file, create a configuration object:
     - Configurable properties will be private
     - Used through getters and setters
-3. No document states allowed (eg: $(document).ready())
+3. No document states allowed (eg: ```$(document).ready()```)
 4. No CSS or HTML manipulation
 5. No hardcodings
 
