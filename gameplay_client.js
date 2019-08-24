@@ -62,8 +62,13 @@ var ClientGameplay = function(CONFIG) {
         fullscreen_button = $(CONFIG.getFullscreenButtonSelector());
 
     this.init = function() {
+
+        // Adjust iframe size
         resizeFrame();
+
+        // Send configuration object to iframe
         iframeWindow.Gameplay.setClientCONFIG(CONFIG);
+
         bindEvents();
     };
 
@@ -94,7 +99,9 @@ var ClientGameplay = function(CONFIG) {
         var screenshot = $(iframeWindow.document.getElementById('screenshot'));
         var ratio = screenshot.width() / screenshot.height();
 
-        iframe.height(iframe.width() / ratio);
+        if(ratio < 2) {
+            iframe.height(iframe.width() / ratio);
+        }
     };
 
     this.init();
