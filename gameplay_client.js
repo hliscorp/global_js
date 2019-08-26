@@ -66,9 +66,10 @@ var ClientGameplay = function(CONFIG) {
         iframe = $(CONFIG.getIframeSelector()),
         play_button = $(CONFIG.getPlayButtonSelector()),
         reload_button = $(CONFIG.getReloadButtonSelector()),
-        fullscreen_button = $(CONFIG.getFullscreenButtonSelector());
+        fullscreen_button = $(CONFIG.getFullscreenButtonSelector()),
+        is_first_load = true;
 
-    var init = function() {
+    this.init = function() {
 
         // Adjust iframe size
         resizeFrame();
@@ -76,7 +77,14 @@ var ClientGameplay = function(CONFIG) {
         // Send configuration object to iframe
         iframeWindow.Gameplay.setClientCONFIG(CONFIG);
 
+        if(iframe.hasClass('fullscreen')) {
+
+            iframeWindow.Gameplay.toggleFullScreen();
+        }
+
         bindEvents();
+
+        is_first_load = false;
     };
 
     var bindEvents = function() {
@@ -85,14 +93,22 @@ var ClientGameplay = function(CONFIG) {
         play_button.on('click', iframeWindow.Gameplay.engageGameplay);
 
         // Bind reload button
-        reload_button.on('click', reloadFrame);
+        if(is_first_load) {
+
+            reload_button.on('click', reloadFrame);
+        }
 
         // Bind fullscreen button
-        fullscreen_button.on('click', function() {
+        if(is_first_load) {
 
-            CONFIG.fullscreenHandler();
-            iframeWindow.Gameplay.toggleFullScreen();
-        });
+            fullscreen_button.on('click', function () {
+
+
+                console.log(this);
+                CONFIG.fullscreenHandler();
+                iframeWindow.Gameplay.toggleFullScreen();
+            });
+        }
 
         // Bind iframe resize on window resize
         $(window).on('resize', resizeFrame);
@@ -129,8 +145,5 @@ var ClientGameplay = function(CONFIG) {
                 iframe.attr('height', iframe.width() / iframe.attr('width') * iframe.attr('height'));
             }
         }
-        // iframe.attr('height', 100);
     };
-
-    init();
 };
