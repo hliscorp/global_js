@@ -61,7 +61,7 @@ var ClientGameplay = function(CONFIG) {
         reload_button = $(CONFIG.getReloadButtonSelector()),
         fullscreen_button = $(CONFIG.getFullscreenButtonSelector());
 
-    this.init = function() {
+    var init = function() {
 
         // Adjust iframe size
         resizeFrame();
@@ -82,15 +82,20 @@ var ClientGameplay = function(CONFIG) {
 
         // Bind fullscreen button
         fullscreen_button.on('click', iframeWindow.Gameplay.toggleFullScreen);
-    };
 
+        // Bind iframe resize on window resize
+        $(window).on('resize', resizeFrame);
+    };
     var reloadFrame = function() {
 
-        // Display play button after iframe reloads
-        iframe.on('load', function() {
+        // Display play button after iframe reloads if not screenshot
+        if(!iframeWindow.document.getElementsByTagName('body')[0].dataset.type === 'screenshot') {
 
-            play_button.show();
-        });
+            iframe.on('load', function() {
+
+                play_button.show();
+            });
+        }
 
         iframe.attr('src', iframe.attr('src'));
     };
@@ -98,24 +103,23 @@ var ClientGameplay = function(CONFIG) {
 
         var screenshot = $(iframeWindow.document.getElementById('screenshot'));
         var ratio = screenshot.width() / screenshot.height();
+        
+        // If not fullscreen
+        if(!iframeWindow.Gameplay.is_fullscreen) {
 
-        if(ratio < 2) {
-            iframe.height(iframe.width() / ratio);
+            if(ratio < 2) { // Resize iFrame by the screen shot ratio
+
+                // iframe.height(iframe.width() / ratio);
+                iframe.attr('height', iframe.width() / iframe.attr('width') * iframe.attr('height'));
+
+
+            } else { // Resize iFrame by its original ratio
+
+                iframe.attr('height', iframe.width() / iframe.attr('width') * iframe.attr('height'));
+            }
         }
+        // iframe.attr('height', 100);
     };
 
-    this.init();
-
+    init();
 };
-
-
-$("#gameplay_iframe").load(function() {
-
-    var conf = new ClientGameplayCONFIG();
-    conf.setIframeSelector('#gameplay_iframe');
-    conf.setPlayButtonSelector('#game_play_button');
-    conf.setReloadButtonSelector('#play-replay');
-    conf.setFullscreenButtonSelector('#play-fullscreen');
-
-    var g = new ClientGameplay(conf);
-});
