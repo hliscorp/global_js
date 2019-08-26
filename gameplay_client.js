@@ -89,7 +89,7 @@ var ClientGameplay = function(CONFIG) {
     var reloadFrame = function() {
 
         // Display play button after iframe reloads if not screenshot
-        if(!iframeWindow.document.getElementsByTagName('body')[0].dataset.type === 'screenshot') {
+        if(iframeWindow.document.getElementsByTagName('body')[0].dataset.type !== 'screenshot') {
 
             iframe.on('load', function() {
 
