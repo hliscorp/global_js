@@ -14,6 +14,9 @@ var ClientGameplayCONFIG = function() {
     // Selector for the fullscreen button
     var fullscreenButtonSelector = '#play-fullscreen';
 
+    // Handler function for fullscreen events
+    this.fullscreenHandler = function() {};
+
 
     // Setters
     this.setIframeSelector = function(selector) {
@@ -31,6 +34,10 @@ var ClientGameplayCONFIG = function() {
     this.setFullscreenButtonSelector = function(selector) {
 
         fullscreenButtonSelector = selector;
+    };
+    this.setFullscreenHandler = function(handler) {
+
+        this.fullscreenHandler = handler;
     };
 
 
@@ -50,7 +57,7 @@ var ClientGameplayCONFIG = function() {
     this.getFullscreenButtonSelector = function() {
 
         return fullscreenButtonSelector;
-    }
+    };
 };
 
 var ClientGameplay = function(CONFIG) {
@@ -81,7 +88,11 @@ var ClientGameplay = function(CONFIG) {
         reload_button.on('click', reloadFrame);
 
         // Bind fullscreen button
-        fullscreen_button.on('click', iframeWindow.Gameplay.toggleFullScreen);
+        fullscreen_button.on('click', function() {
+
+            CONFIG.fullscreenHandler();
+            iframeWindow.Gameplay.toggleFullScreen();
+        });
 
         // Bind iframe resize on window resize
         $(window).on('resize', resizeFrame);
