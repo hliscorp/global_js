@@ -103,8 +103,6 @@ var ClientGameplay = function(CONFIG) {
 
             fullscreen_button.on('click', function () {
 
-
-                console.log(this);
                 CONFIG.fullscreenHandler();
                 iframeWindow.Gameplay.toggleFullScreen();
             });
@@ -130,15 +128,13 @@ var ClientGameplay = function(CONFIG) {
 
         var screenshot = $(iframeWindow.document.getElementById('screenshot'));
         var ratio = screenshot.width() / screenshot.height();
-        
+
         // If not fullscreen
         if(!iframeWindow.Gameplay.is_fullscreen) {
 
             if(ratio < 2) { // Resize iFrame by the screen shot ratio
 
-                // iframe.height(iframe.width() / ratio);
-                iframe.attr('height', iframe.width() / iframe.attr('width') * iframe.attr('height'));
-
+                iframe.attr('height', Math.round(iframe.width() / ratio));
 
             } else { // Resize iFrame by its original ratio
 
