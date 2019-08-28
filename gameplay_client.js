@@ -67,9 +67,16 @@ var ClientGameplay = function(CONFIG) {
         play_button = $(CONFIG.getPlayButtonSelector()),
         reload_button = $(CONFIG.getReloadButtonSelector()),
         fullscreen_button = $(CONFIG.getFullscreenButtonSelector()),
+        game_ratio = 0,
         is_first_load = true;
 
     this.init = function() {
+
+        // Set game ratio
+        if(is_first_load) {
+
+            setGameRatio();
+        }
 
         // Adjust iframe size
         resizeFrame();
@@ -87,6 +94,11 @@ var ClientGameplay = function(CONFIG) {
         is_first_load = false;
     };
 
+    var setGameRatio = function() {
+
+        var screenshot = $(iframeWindow.document.getElementById('screenshot'));
+        game_ratio = screenshot.width() / screenshot.height();
+    };
     var bindEvents = function() {
 
         // Bind play button
@@ -105,6 +117,7 @@ var ClientGameplay = function(CONFIG) {
 
                 CONFIG.fullscreenHandler();
                 iframeWindow.Gameplay.toggleFullScreen();
+                resizeFrame();
             });
         }
 
@@ -123,18 +136,17 @@ var ClientGameplay = function(CONFIG) {
         }
 
         iframe.attr('src', iframe.attr('src'));
+
+        resizeFrame();
     };
     var resizeFrame = function() {
-
-        var screenshot = $(iframeWindow.document.getElementById('screenshot'));
-        var ratio = screenshot.width() / screenshot.height();
 
         // If not fullscreen
         if(!iframeWindow.Gameplay.is_fullscreen) {
 
-            if(ratio < 2) { // Resize iFrame by the screen shot ratio
+            if(game_ratio < 2) { // Resize iFrame by the screen shot ratio
 
-                iframe.attr('height', Math.round(iframe.width() / ratio));
+                iframe.attr('height', Math.round(iframe.width() / game_ratio));
 
             } else { // Resize iFrame by its original ratio
 
