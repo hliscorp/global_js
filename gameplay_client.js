@@ -1,5 +1,6 @@
 document.domain = window.location.hostname.replace("www.","").replace("dev.","");
 
+
 var ClientGameplayCONFIG = function() {
 
     // Selector for the subdomain iframe loaded in client
@@ -14,7 +15,29 @@ var ClientGameplayCONFIG = function() {
     // Selector for the fullscreen button
     var fullscreenButtonSelector = '#play-fullscreen';
 
+    // Object holding margin configuration for different gameplay states (fullscreen desktop/mobile)
+    var marginSettings = {
+        desktop: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        },
+        mobile: {
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0
+        }
+    };
+
     // Handler function for fullscreen events
+    /* This is a function that controls
+        what happens with the elements in the
+        parent site (mainly css changes) when fullscreen is triggered
+        in addition to the behavior defined in the
+        gameplay component
+     */
     this.fullscreenHandler = function() {};
 
 
@@ -39,6 +62,34 @@ var ClientGameplayCONFIG = function() {
 
         this.fullscreenHandler = handler;
     };
+    this.setDesktopFullscreenMargin = function(top, right, bottom, left) {
+
+        top = top || 0;
+        right = right || 0;
+        bottom = bottom || 0;
+        left = left || 0;
+
+        marginSettings.desktop = {
+            top: top || 0,
+            right: right || 0,
+            bottom: bottom || 0,
+            left: left || 0
+        }
+    };
+    this.setMobileFullscreenMargin = function(top, right, bottom, left) {
+
+        top = top || 0;
+        right = right || 0;
+        bottom = bottom || 0;
+        left = left || 0;
+
+        marginSettings.mobile = {
+            top: top || 0,
+            right: right || 0,
+            bottom: bottom || 0,
+            left: left || 0
+        }
+    };
 
 
     // Getters
@@ -57,6 +108,14 @@ var ClientGameplayCONFIG = function() {
     this.getFullscreenButtonSelector = function() {
 
         return fullscreenButtonSelector;
+    };
+    this.getDesktopFullscreenMargin = function() {
+
+        return marginSettings.desktop;
+    };
+    this.getMobileFullscreenMargin = function() {
+
+        return marginSettings.mobile;
     };
 };
 
@@ -86,7 +145,7 @@ var ClientGameplay = function(CONFIG) {
 
         if(iframe.hasClass('fullscreen')) {
 
-            iframeWindow.Gameplay.toggleFullScreen();
+            iframeWindow.Gameplay.toggleFullScreen(true);
         }
 
         bindEvents();
@@ -102,6 +161,7 @@ var ClientGameplay = function(CONFIG) {
     var bindEvents = function() {
 
         // Bind play button
+        play_button.off('click');
         play_button.on('click', iframeWindow.Gameplay.engageGameplay);
 
         // Bind reload button
@@ -115,29 +175,37 @@ var ClientGameplay = function(CONFIG) {
 
             fullscreen_button.on('click', function () {
 
-                CONFIG.fullscreenHandler();
                 iframeWindow.Gameplay.toggleFullScreen();
-                resizeFrame();
+                // resizeFrame();
             });
         }
 
         // Bind iframe resize on window resize
         $(window).on('resize', resizeFrame);
     };
-    var reloadFrame = function() {
+    var reloadFrame = function(e) {
 
-        // Display play button after iframe reloads if not screenshot
-        if(iframeWindow.document.getElementsByTagName('body')[0].dataset.type !== 'screenshot' && !iframeWindow.document.getElementsByTagName('body')[0].dataset.restricted) {
+        var is_fullscreen = iframeWindow.Gameplay.is_fullscreen;
 
-            iframe.on('load', function() {
+        if(is_fullscreen && window.outerWidth < 690) {
 
-                play_button.show();
-            });
+            e.preventDefault();
+            fullscreen_button.trigger('click');
+
+        } else {
+
+            // Display play button after iframe reloads if not screenshot
+            if(iframeWindow.document.getElementsByTagName('body')[0].dataset.type !== 'screenshot' && !iframeWindow.document.getElementsByTagName('body')[0].dataset.restricted) {
+
+                iframe.one('load', function() {
+
+                    play_button.show();
+
+                });
+            }
+
+            iframe.attr('src', iframe.attr('src'));
         }
-
-        iframe.attr('src', iframe.attr('src'));
-
-        resizeFrame();
     };
     var resizeFrame = function() {
 
