@@ -200,7 +200,6 @@ var ClientGameplay = function(CONFIG) {
                 iframe.one('load', function() {
 
                     play_button.show();
-
                 });
             }
 
