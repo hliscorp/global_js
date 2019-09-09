@@ -131,17 +131,14 @@ var ClientGameplay = function(CONFIG) {
 
     this.init = function() {
 
+        // Send configuration object to iframe
+        iframeWindow.Gameplay.setClientConfig(CONFIG);
+
         // Set game ratio
         if(is_first_load) {
 
             setGameRatio();
         }
-
-        // Adjust iframe size
-        resizeFrame();
-
-        // Send configuration object to iframe
-        iframeWindow.Gameplay.setClientCONFIG(CONFIG);
 
         if(iframe.hasClass('fullscreen')) {
 
@@ -176,49 +173,26 @@ var ClientGameplay = function(CONFIG) {
             fullscreen_button.on('click', function () {
 
                 iframeWindow.Gameplay.toggleFullScreen();
-                // resizeFrame();
             });
         }
 
         // Bind iframe resize on window resize
-        $(window).on('resize', resizeFrame);
+        $(iframeWindow).on('resize', iframeWindow.Gameplay.resizeElements);
     };
-    var reloadFrame = function(e) {
+    var reloadFrame = function() {
 
         var is_fullscreen = iframeWindow.Gameplay.is_fullscreen;
+        var game_ratio = iframeWindow.Gameplay.game_ratio;
 
-        if(is_fullscreen && window.outerWidth < 690) {
+        // Display play button after iframe reloads if not screenshot
+        if(iframeWindow.document.getElementsByTagName('body')[0].dataset.type !== 'screenshot' && !iframeWindow.document.getElementsByTagName('body')[0].dataset.restricted) {
 
-            e.preventDefault();
-            fullscreen_button.trigger('click');
+            iframe.one('load', function() {
 
-        } else {
-
-            // Display play button after iframe reloads if not screenshot
-            if(iframeWindow.document.getElementsByTagName('body')[0].dataset.type !== 'screenshot' && !iframeWindow.document.getElementsByTagName('body')[0].dataset.restricted) {
-
-                iframe.one('load', function() {
-
-                    play_button.show();
-                });
-            }
-
-            iframe.attr('src', iframe.attr('src'));
+                play_button.show();
+            });
         }
-    };
-    var resizeFrame = function() {
-
-        // If not fullscreen
-        if(!iframeWindow.Gameplay.is_fullscreen) {
-
-            if(game_ratio < 2) { // Resize iFrame by the screen shot ratio
-
-                iframe.attr('height', Math.round(iframe.width() / game_ratio));
-
-            } else { // Resize iFrame by its original ratio
-
-                iframe.attr('height', iframe.width() / iframe.attr('width') * iframe.attr('height'));
-            }
-        }
+        // iframe.
+        iframe.attr('src', iframe.attr('src'));
     };
 };
