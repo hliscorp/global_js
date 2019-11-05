@@ -39,6 +39,9 @@ var ClientGameplayCONFIG = function() {
         gameplay component
      */
     this.fullscreenHandler = function() {};
+    
+    // Handler function for play button click events
+    this.playGameHandler = function() {};
 
 
     // Setters
@@ -61,6 +64,10 @@ var ClientGameplayCONFIG = function() {
     this.setFullscreenHandler = function(handler) {
 
         this.fullscreenHandler = handler;
+    };
+    this.setplayGameHandler = function(handler) {
+        
+        this.playGameHandler = handler;
     };
     this.setDesktopFullscreenMargin = function(top, right, bottom, left) {
 
