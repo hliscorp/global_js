@@ -42,6 +42,8 @@ var ClientGameplayCONFIG = function() {
     
     // Handler function for play button click events
     this.playGameHandler = function() {};
+    // Handler function for play button click events
+    this.reloadHandler = function() {};
 
 
     // Setters
@@ -68,6 +70,10 @@ var ClientGameplayCONFIG = function() {
     this.setplayGameHandler = function(handler) {
         
         this.playGameHandler = handler;
+    };
+    this.setreloadGameHandler = function(handler) {
+        
+        this.reloadGameHandler = handler;
     };
     this.setDesktopFullscreenMargin = function(top, right, bottom, left) {
 
