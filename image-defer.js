@@ -72,6 +72,8 @@ var imageDefer = function(CONFIG) {
         // Load images on page load
         spanToImage(CONFIG.getPageLoadAmount());
 
+        // Unbind event
+        $(window).off('scroll', updateImages);
 
         bindEvents();
     };
