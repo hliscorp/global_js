@@ -6,16 +6,24 @@
  * @param className Should be "lazy_loaded"
  */
 function imageDefer(className) {
-	var observer = new IntersectionObserver(function(entries) {
-		for(var j=0; j<entries.length; j++) {
-			var element = entries[j].target;
-			if(entries[j].isIntersecting===true && element.src=="") {
-				element.src = element.getAttribute("data-src");
-			}
+	var ua = window.navigator.userAgent;
+	if ((ua.indexOf('MSIE ') > -1) || (ua.indexOf('Trident/') > -1)) {
+		var images = document.getElementsByClassName(className);
+		for(var i=0; i<images.length; i++) {
+			images[i].src = images[i].getAttribute("data-src");
 		}
-	}, { threshold: [0] });
-	var images = document.getElementsByClassName(className);
-	for(var i=0; i<images.length; i++) {
-		observer.observe(images[i]);
+	} else {
+		var observer = new IntersectionObserver(function(entries) {
+			for(var j=0; j<entries.length; j++) {
+				var element = entries[j].target;
+				if(entries[j].isIntersecting===true && element.src=="") {
+					element.src = element.getAttribute("data-src");
+				}
+			}
+		}, { threshold: [0] });
+		var images = document.getElementsByClassName(className);
+		for(var i=0; i<images.length; i++) {
+			observer.observe(images[i]);
+		}
 	}
 }
